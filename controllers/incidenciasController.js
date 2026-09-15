@@ -56,6 +56,56 @@ function buscarIncidenciaPorId(req, res) {
   }
 }
 
+// 5. Cambiar Estado de Incidencia
+function cambiarEstado(req, res) {
+  const id = Number(req.params.id);
+  const { estado } = req.body;
+
+  const incidencia = incidencias.find(item => item.id === id);
+
+  if (!incidencia) {
+    return res.status(404).json({ mensaje: "Incidencia no encontrada" });
+  }
+
+  if (!cadenaValida(estado)) {
+    return res.status(400).json({ mensaje: "El estado es obligatorio." });
+  }
+
+  let esValido;
+  switch (estado) {
+    case "Pendiente":
+    case "En Proceso":
+    case "Resuelta":
+    case "Cancelada":
+      esValido = true;
+      break;
+    default:
+      esValido = false;
+  }
+
+  if (!esValido) {
+    return res.status(400).json({ mensaje: 'El estado debe ser "Pendiente", "En Proceso", "Resuelta" o "Cancelada".' });
+  }
+
+  incidencia.estado = estado.trim();
+
+  return res.status(200).json({ mensaje: "Estado actualizado correctamente", incidencia });
+}
+
+// 6. Eliminar Incidencia
+function eliminarIncidencia(req, res) {
+  const id = Number(req.params.id);
+  const index = incidencias.findIndex(item => item.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ mensaje: "Incidencia no encontrada" });
+  }
+
+  incidencias.splice(index, 1);
+
+  return res.status(200).json({ mensaje: "Incidencia eliminada correctamente" });
+}
+
 // 7. Endpoint de estadistica
 function obtenerEstadisticas(req, res) {
   const estadisticas = {
@@ -109,7 +159,7 @@ module.exports = {
   obtenerEstadisticas,
   clasificacionAutomatica,
   listarIncidencias,
-  buscarIncidenciaPorId
+  buscarIncidenciaPorId,
+  cambiarEstado,
+  eliminarIncidencia
 };
-
-
