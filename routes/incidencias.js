@@ -6,12 +6,16 @@ const {
   listarIncidencias,          
   buscarIncidenciaPorId,      
   obtenerEstadisticas,
-  clasificacionAutomatica
+  clasificacionAutomatica,
+  cambiarEstado,
+  eliminarIncidencia
 } = require('../controllers/incidenciasController');
 
 router.get('/', listarIncidencias);
 router.post('/', registrarIncidencia);
 router.get('/:id', buscarIncidenciaPorId);
+router.put('/:id/estado', cambiarEstado);
+router.delete('/:id', eliminarIncidencia);
 router.get('/estadisticas', obtenerEstadisticas);
 router.get('/:id/clasificacion', clasificacionAutomatica);
 
