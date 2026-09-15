@@ -9,7 +9,7 @@ function registrarIncidencia(req, res) {
   const { empleado, area, descripcion, prioridad } = req.body;
 
   if (!empleado || !area || !descripcion || !prioridad) {
-    return res.status(400).json({ error: 'Todos los campos son obligatorios.', });
+    return res.status(400).json({ error: 'Todos los campos son obligatorios.' });
   }
 
   if (!cadenaValida(empleado) ||
@@ -17,7 +17,7 @@ function registrarIncidencia(req, res) {
     !cadenaValida(descripcion) ||
     !cadenaValida(prioridad)
   ) {
-    return res.status(400).json({ error: 'No se permiten campos con cadenas vacias.', });
+    return res.status(400).json({ error: 'No se permiten campos con cadenas vacias.' });
   }
 
   if (!validarPrioridad(prioridad)) {
@@ -35,14 +35,8 @@ function registrarIncidencia(req, res) {
 
   incidencias.push(nuevaIncidencia);
 
-  return res.status(201).json({ Mensaje: 'Incidencia registrada correctamente.', });
+  return res.status(201).json({ Mensaje: 'Incidencia registrada correctamente.' });
 }
-
-module.exports = {
-  registrarIncidencia,
-};
-
-
 
 // 7. Endpoint de estadistica
 function obtenerEstadisticas(req, res) {
@@ -56,13 +50,6 @@ function obtenerEstadisticas(req, res) {
 
   return res.status(200).json(estadisticas);
 }
-
-module.exports = {
-  registrarIncidencia,
-  obtenerEstadisticas
-};
-
-
 
 // 8. Clasificación Automática
 function clasificacionAutomatica(req, res) {
@@ -98,3 +85,9 @@ function clasificacionAutomatica(req, res) {
     clasificacion: clasificacion
   });
 }
+
+module.exports = {
+  registrarIncidencia,
+  obtenerEstadisticas,
+  clasificacionAutomatica
+};
