@@ -38,6 +38,24 @@ function registrarIncidencia(req, res) {
   return res.status(201).json({ Mensaje: 'Incidencia registrada correctamente.' });
 }
 
+// 3.Listar incidencias
+function listarIncidencias(req, res) {
+  return res.status(200).json(incidencias);
+}
+
+function buscarIncidenciaPorId(req, res) {
+  const idBuscado = Number(req.params.id);
+  const incidenciaEncontrada = incidencias.find(item => item.id === idBuscado);
+
+  if (incidenciaEncontrada) {
+    return res.status(200).json(incidenciaEncontrada);
+  } else {
+    return res.status(404).json({
+      mensaje: "Incidencia no encontrada"
+    });
+  }
+}
+
 // 7. Endpoint de estadistica
 function obtenerEstadisticas(req, res) {
   const estadisticas = {
@@ -89,5 +107,9 @@ function clasificacionAutomatica(req, res) {
 module.exports = {
   registrarIncidencia,
   obtenerEstadisticas,
-  clasificacionAutomatica
+  clasificacionAutomatica,
+  listarIncidencias,
+  buscarIncidenciaPorId
 };
+
+
