@@ -1,27 +1,27 @@
 const incidencias = require('../data/incidencias.js');
 const {
-    cadenaValida,
-    validarPrioridad,
-    generarId,
+  cadenaValida,
+  validarPrioridad,
+  generarId,
 } = require('../utils/helpers.js');
 
-function registrarIncidencia(req, res){
+function registrarIncidencia(req, res) {
   const { empleado, area, descripcion, prioridad } = req.body;
 
   if (!empleado || !area || !descripcion || !prioridad) {
-    return res.status(400).json({error: 'Todos los campos son obligatorios.',});
+    return res.status(400).json({ error: 'Todos los campos son obligatorios.', });
   }
 
   if (!cadenaValida(empleado) ||
-      !cadenaValida(area) ||
-      !cadenaValida(descripcion) ||
-      !cadenaValida(prioridad)
+    !cadenaValida(area) ||
+    !cadenaValida(descripcion) ||
+    !cadenaValida(prioridad)
   ) {
-    return res.status(400).json({error: 'No se permiten campos con cadenas vacias.',});
+    return res.status(400).json({ error: 'No se permiten campos con cadenas vacias.', });
   }
 
   if (!validarPrioridad(prioridad)) {
-    return res.status(400).json({mensaje: 'La prioridad debe ser "Alta", "Media" o "Baja",'});
+    return res.status(400).json({ mensaje: 'La prioridad debe ser "Alta", "Media" o "Baja",' });
   }
 
   const nuevaIncidencia = {
@@ -35,11 +35,11 @@ function registrarIncidencia(req, res){
 
   incidencias.push(nuevaIncidencia);
 
-  return res.status(201).json({Mensaje: 'Incidencia registrada correctamente.',});
+  return res.status(201).json({ Mensaje: 'Incidencia registrada correctamente.', });
 }
 
 module.exports = {
-    registrarIncidencia,
+  registrarIncidencia,
 };
 
 
@@ -61,3 +61,40 @@ module.exports = {
   registrarIncidencia,
   obtenerEstadisticas
 };
+
+
+
+// 8. Clasificación Automática
+function clasificacionAutomatica(req, res) {
+  const id = Number(req.params.id);
+
+  const incidencia = incidencias.find(item => item.id === id);
+
+  if (!incidencia) {
+    return res.status(404).json({
+      mensaje: "Incidencia no encontrada"
+    });
+  }
+
+  let clasificacion = "";
+
+  switch (incidencia.prioridad.trim().toLowerCase()) {
+    case 'alta':
+      clasificacion = "Crítica";
+      break;
+    case 'media':
+      clasificacion = "Importante";
+      break;
+    case 'baja':
+      clasificacion = "Normal";
+      break;
+    default:
+      clasificacion = "Desconocida";
+      break;
+  }
+
+  return res.status(200).json({
+    id: incidencia.id,
+    clasificacion: clasificacion
+  });
+}
