@@ -41,3 +41,23 @@ function registrarIncidencia(req, res){
 module.exports = {
     registrarIncidencia,
 };
+
+
+
+// 7. Endpoint de estadistica
+function obtenerEstadisticas(req, res) {
+  const estadisticas = {
+    totalIncidencias: incidencias.length,
+    pendientes: incidencias.filter(item => item.estado.toLowerCase() === 'pendiente').length,
+    enProceso: incidencias.filter(item => item.estado.toLowerCase() === 'en proceso').length,
+    resueltas: incidencias.filter(item => item.estado.toLowerCase() === 'resuelta').length,
+    canceladas: incidencias.filter(item => item.estado.toLowerCase() === 'cancelada').length
+  };
+
+  return res.status(200).json(estadisticas);
+}
+
+module.exports = {
+  registrarIncidencia,
+  obtenerEstadisticas
+};
