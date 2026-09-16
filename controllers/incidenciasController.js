@@ -1,0 +1,165 @@
+const incidencias = require('../data/incidencias.js');
+const {
+  cadenaValida,
+  validarPrioridad,
+  generarId,
+} = require('../utils/helpers.js');
+
+function registrarIncidencia(req, res) {
+  const { empleado, area, descripcion, prioridad } = req.body;
+
+  if (!empleado || !area || !descripcion || !prioridad) {
+    return res.status(400).json({ error: 'Todos los campos son obligatorios.' });
+  }
+
+  if (!cadenaValida(empleado) ||
+    !cadenaValida(area) ||
+    !cadenaValida(descripcion) ||
+    !cadenaValida(prioridad)
+  ) {
+    return res.status(400).json({ error: 'No se permiten campos con cadenas vacias.' });
+  }
+
+  if (!validarPrioridad(prioridad)) {
+    return res.status(400).json({ mensaje: 'La prioridad debe ser "Alta", "Media" o "Baja",' });
+  }
+
+  const nuevaIncidencia = {
+    id: generarId(incidencias),
+    empleado: empleado.trim(),
+    area: area.trim(),
+    descripcion: descripcion.trim(),
+    prioridad: prioridad.trim(),
+    estado: "Pendiente",
+  };
+
+  incidencias.push(nuevaIncidencia);
+
+  return res.status(201).json({ Mensaje: 'Incidencia registrada correctamente.' });
+}
+
+// 3.Listar incidencias
+function listarIncidencias(req, res) {
+  return res.status(200).json(incidencias);
+}
+
+function buscarIncidenciaPorId(req, res) {
+  const idBuscado = Number(req.params.id);
+  const incidenciaEncontrada = incidencias.find(item => item.id === idBuscado);
+
+  if (incidenciaEncontrada) {
+    return res.status(200).json(incidenciaEncontrada);
+  } else {
+    return res.status(404).json({
+      mensaje: "Incidencia no encontrada"
+    });
+  }
+}
+
+// 5. Cambiar Estado de Incidencia
+function cambiarEstado(req, res) {
+  const id = Number(req.params.id);
+  const { estado } = req.body;
+
+  const incidencia = incidencias.find(item => item.id === id);
+
+  if (!incidencia) {
+    return res.status(404).json({ mensaje: "Incidencia no encontrada" });
+  }
+
+  if (!cadenaValida(estado)) {
+    return res.status(400).json({ mensaje: "El estado es obligatorio." });
+  }
+
+  let esValido;
+  switch (estado) {
+    case "Pendiente":
+    case "En Proceso":
+    case "Resuelta":
+    case "Cancelada":
+      esValido = true;
+      break;
+    default:
+      esValido = false;
+  }
+
+  if (!esValido) {
+    return res.status(400).json({ mensaje: 'El estado debe ser "Pendiente", "En Proceso", "Resuelta" o "Cancelada".' });
+  }
+
+  incidencia.estado = estado.trim();
+
+  return res.status(200).json({ mensaje: "Estado actualizado correctamente", incidencia });
+}
+
+// 6. Eliminar Incidencia
+function eliminarIncidencia(req, res) {
+  const id = Number(req.params.id);
+  const index = incidencias.findIndex(item => item.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ mensaje: "Incidencia no encontrada" });
+  }
+
+  incidencias.splice(index, 1);
+
+  return res.status(200).json({ mensaje: "Incidencia eliminada correctamente" });
+}
+
+// 7. Endpoint de estadistica
+function obtenerEstadisticas(req, res) {
+  const estadisticas = {
+    totalIncidencias: incidencias.length,
+    pendientes: incidencias.filter(item => item.estado.toLowerCase() === 'pendiente').length,
+    enProceso: incidencias.filter(item => item.estado.toLowerCase() === 'en proceso').length,
+    resueltas: incidencias.filter(item => item.estado.toLowerCase() === 'resuelta').length,
+    canceladas: incidencias.filter(item => item.estado.toLowerCase() === 'cancelada').length
+  };
+
+  return res.status(200).json(estadisticas);
+}
+
+// 8. Clasificación Automática
+function clasificacionAutomatica(req, res) {
+  const id = Number(req.params.id);
+
+  const incidencia = incidencias.find(item => item.id === id);
+
+  if (!incidencia) {
+    return res.status(404).json({
+      mensaje: "Incidencia no encontrada"
+    });
+  }
+
+  let clasificacion = "";
+
+  switch (incidencia.prioridad.trim().toLowerCase()) {
+    case 'alta':
+      clasificacion = "Crítica";
+      break;
+    case 'media':
+      clasificacion = "Importante";
+      break;
+    case 'baja':
+      clasificacion = "Normal";
+      break;
+    default:
+      clasificacion = "Desconocida";
+      break;
+  }
+
+  return res.status(200).json({
+    id: incidencia.id,
+    clasificacion: clasificacion
+  });
+}
+
+module.exports = {
+  registrarIncidencia,
+  obtenerEstadisticas,
+  clasificacionAutomatica,
+  listarIncidencias,
+  buscarIncidenciaPorId,
+  cambiarEstado,
+  eliminarIncidencia
+};

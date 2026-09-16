@@ -1,0 +1,29 @@
+{
+  "name": "pw-evaluacion1",
+  "version": "1.0.0",
+  "description": "Desarrollar una API REST utilizando Express que permita administrar solicitudes de soporte  técnico dentro de una empresa.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.json",
+    "dev": "nodemon app.json", 
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nathanhdez/PW-EVALUACION1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/nathanhdez/PW-EVALUACION1/issues"
+  },
+  "homepage": "https://github.com/nathanhdez/PW-EVALUACION1#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
