@@ -13,10 +13,10 @@ const {
 
 router.get('/', listarIncidencias);
 router.post('/', registrarIncidencia);
+router.get('/estadisticas', obtenerEstadisticas);
 router.get('/:id', buscarIncidenciaPorId);
 router.put('/:id/estado', cambiarEstado);
 router.delete('/:id', eliminarIncidencia);
-router.get('/estadisticas', obtenerEstadisticas);
 router.get('/:id/clasificacion', clasificacionAutomatica);
 
 module.exports = router;
